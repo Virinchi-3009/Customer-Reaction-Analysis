@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        .product-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .product {
+            background: #111;
+            padding: 10px;
+            margin: 5px 0;
+            width: 80%;
+            border-radius: 5px;
+            text-align: center;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            border: none;
+            background-color: #fff;
+            color: #000;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #333;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Select a Product to Analyze</h1>
+    <div class="product-container">
+        {% for result in results %}
+            <div class="product">
+                <p>{{ result.title }}</p>
+                <form method="POST" action="/select_product">
+                    <input type="hidden" name="product_url" value="{{ result.link }}">
+                    <button type="submit">Analyze This Product</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

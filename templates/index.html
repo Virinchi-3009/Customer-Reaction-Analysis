@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Review Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: #000000;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+        }
+        .sidebar {
+            width: 30%;
+            background-color: rgb(12, 8, 1);
+            padding: 20px;
+            color: #ffffff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        input[type="text"], input[type="file"] {
+            padding: 12px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 10px 0;
+            transition: border 0.3s;
+        }
+        input[type="text"]:focus, input[type="file"]:focus {
+            border-color: #5cb85c;
+            outline: none;
+        }
+        button {
+            padding: 12px;
+            width: 100%;
+            border: none;
+            background-color: #5cb85c;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .main-content {
+            width: 70%;
+            padding: 20px;
+            background-color: #f4f4f4;
+            overflow-y: auto;
+        }
+        .message-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .message-container ul {
+            list-style: none;
+            padding: 0;
+        }
+        .message-container li {
+            background: #e9ecef;
+            margin: 5px auto;
+            padding: 10px;
+            border-radius: 4px;
+            width: 80%;
+            max-width: 400px;
+            color: #000;
+        }
+        .results-container {
+            background: rgb(12, 8, 1);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            color: #ffffff;
+        }
+        .review {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            color: #000;
+            border-left: 5px solid #007bff;
+        }
+        .plots {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        .plots img {
+            width: 45%; /* Adjusted width for better layout */
+            height: auto;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar, .main-content {
+                width: 100%;
+            }
+            .plots img {
+                width: 100%; /* Full width on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h1>Analyze Reviews</h1>
+            <div class="form-container">
+                <form action="/analyze" method="POST" enctype="multipart/form-data">
+                    <input type="text" name="url" placeholder="Enter Product URL">
+                    <input type="file" name="file" accept=".txt,.pdf,.doc,.docx">
+                    <button type="submit">Analyze</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="message-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    <ul>
+                    {% for category, message in messages %}
+                      <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                  {% endif %}
+                {% endwith %}
+            </div>
+
+            {% if reviews or predictions %}
+            <div class="results-container">
+                <h3>Sentiment Analysis Results:</h3>
+                <h4>Reviews:</h4>
+                {% for review in reviews %}
+                    <div class="review">{{ review }}</div>
+                {% endfor %}
+                
+                <h4>Predictions:</h4>
+                <ul>
+                    {% for prediction in predictions %}
+                        <li>{{ prediction }}</li>
+                    {% endfor %}
+                </ul>
+
+                <div class="plots">
+                    <h4>Graphs:</h4>
+                    <img src="{{ plot_paths.bar }}" alt="Sentiment Bar Plot">
+                    <img src="{{ plot_paths.line }}" alt="Sentiment Line Plot">
+                    <img src="{{ plot_paths.pie }}" alt="Sentiment Pie Chart">
+                    <img src="{{ plot_paths.scatter }}" alt="Sentiment Scatter Plot">
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

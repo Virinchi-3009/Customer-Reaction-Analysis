@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Review Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #000000;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+        h3 {
+            color: #ffffff;
+        }
+        h4 {
+            color: #ffffff;
+        }
+        li {
+            color: #ffffff;
+        }
+        .form-container {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            background: rgb(12, 8, 1);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"], input[type="file"] {
+            padding: 12px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 10px 0;
+            transition: border 0.3s;
+        }
+        input[type="text"]:focus, input[type="file"]:focus {
+            border-color: #5cb85c;
+            outline: none;
+        }
+        button {
+            padding: 12px 20px;
+            border: none;
+            background-color: #5cb85c;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .message-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .message-container ul {
+            list-style: none;
+            padding: 0;
+        }
+        .message-container li {
+            background: #e9ecef;
+            margin: 5px auto;
+            padding: 10px;
+            border-radius: 4px;
+            width: 80%;
+            max-width: 400px;
+        }
+        .message-success {
+            color: #5cb85c;
+        }
+        .message-error {
+            color: #d9534f;
+        }
+        .results-container {
+            margin-top: 20px;
+            background: rgb(12, 8, 1);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .review {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-left: 5px solid #007bff;
+        }
+        .plots {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        .plots img {
+            width: 25%;
+            height: auto;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        @media (max-width: 300px) {
+            input[type="text"], input[type="file"], button {
+                width: 60%;
+            }
+            .plots img {
+                width: 60%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Analyze Reviews</h1>
+    <div class="form-container">
+        <form action="/analyze" method="POST" enctype="multipart/form-data">
+            <input type="text" name="url" placeholder="Enter Product URL">
+            <input type="file" name="file" accept=".txt,.pdf,.doc,.docx">
+            <button type="submit">Analyze</button>
+        </form>
+    </div>
+    
+    <div class="message-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul>
+            {% for category, message in messages %}
+              <li class="{{ 'message-' + category }}">{{ message }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+    </div>
+
+    {% if reviews or predictions %}
+    <div class="results-container">
+        <h3>Sentiment Analysis Results:</h3>
+        <h4>Reviews:</h4>
+        {% for review in reviews %}
+            <div class="review">{{ review }}</div>
+        {% endfor %}
+        
+        <h4>Predictions:</h4>
+        <ul>
+            {% for prediction in predictions %}
+                <li>{{ prediction }}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="plots">
+            <h4>Graphs:</h4>
+            <img src="{{ plot_paths.bar }}" alt="Sentiment Bar Plot">
+            <img src="{{ plot_paths.line }}" alt="Sentiment Line Plot">
+            <img src="{{ plot_paths.pie }}" alt="Sentiment Pie Chart">
+            <img src="{{ plot_paths.scatter }}" alt="Sentiment Scatter Plot">
+        </div>
+    </div>
+    {% endif %}
+</body>
+</html>
